@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Montserrat', 'Inter', sans-serif;
+}
+
+.liquid-glass {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border-radius: 32px;
+  border: 1.5px solid rgba(255,255,255,0.18);
+}
+
+.suggestions-bubble {
+  background: #111;
+  color: #fff;
+  border-radius: 20px 20px 24px 24px/20px 20px 32px 32px;
+  padding: 1.4rem 1.2rem 1.4rem 1.6rem;
+  font-size: 1.36rem;
+  font-weight: 500;
+  margin-bottom: 1.7rem;
+  box-shadow: 0 2px 14px rgba(0,0,0,0.18);
+  line-height: 2.1rem;
+}
+
+::-webkit-scrollbar {
+  width: 0.5em;
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.1);
+  border-radius: 9999px;
+}
