@@ -3,7 +3,7 @@
 const axios = require("axios");
 const readline = require("readline");
 
-const endpoint = process.env.ULTIMATE_AI_ENDPOINT || "https://yourdomain.com/api/chat";
+const endpoint = process.env.ULTIMATE_AI_ENDPOINT || "https://optimum-extremely-fox.ngrok-free.app/api/chat";
 const apiKey = process.env.ULTIMATE_AI_API_KEY;
 const conversationId = process.env.ULTIMATE_AI_SESSION || "npx-session";
 
