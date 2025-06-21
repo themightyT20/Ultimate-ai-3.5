@@ -42,33 +42,25 @@ rl.on("line", async (line) => {
     
     const data = res.data;
     
-    // Debug: Show the raw response structure
-    console.log("DEBUG - Raw response:", JSON.stringify(data, null, 2));
-    console.log("DEBUG - Response keys:", Object.keys(data));
-    
-    // Handle response more robustly
+    // Handle the nested response structure: data.response.response
     let responseText = "";
     
     if (typeof data === "string") {
       responseText = data;
+    } else if (data && data.response && typeof data.response === "object" && data.response.response) {
+      responseText = data.response.response;
     } else if (data && typeof data === "object") {
-      // Try common response property names
-      responseText = data.response || 
-                   data.reply || 
-                   data.message || 
-                   data.text || 
-                   data.content || 
-                   data.answer ||
-                   data.output ||
-                   JSON.stringify(data, null, 2);
-    } else {
-      responseText = String(data);
+      // Fallback for other possible structures
+      responseText = data.response || data.reply || data.message || data.text || data.content;
     }
     
-    console.log(`> ${responseText}\n`);
+    if (responseText) {
+      console.log(`> ${responseText.trim()}\n`);
+    } else {
+      console.log(`> Received unexpected response format\n`);
+    }
     
   } catch (err) {
-    console.log("DEBUG - Error response:", err.response?.data);
     const msg = err.response?.data?.error || err.message;
     console.error(`> Error: ${msg}\n`);
   }
