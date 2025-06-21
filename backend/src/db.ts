@@ -7,12 +7,12 @@ if (!connectionString) {
 
 const pool = new Pool({ connectionString });
 
-// Store a new API key for a user
+// Store a new API key for a user (SINGLE key per user - legacy)
 export async function setUserApiKey(userId: number, apiKey: string) {
   await pool.query("UPDATE users SET api_key = $1 WHERE id = $2", [apiKey, userId]);
 }
 
-// Retrieve a user by API key (for auth)
+// Retrieve a user by API key (for auth, legacy single-key logic)
 export async function getUserByApiKey(apiKey: string) {
   const res = await pool.query("SELECT * FROM users WHERE api_key = $1", [apiKey]);
   return res.rows[0];
@@ -34,7 +34,12 @@ export async function createUser(username: string, passwordHash: string) {
 }
 
 // Add chat message to conversation
-export async function addChatMessage(userId: number, conversationId: string, message: string, role: string) {
+export async function addChatMessage(
+  userId: number,
+  conversationId: string,
+  message: string,
+  role: string
+) {
   await pool.query(
     "INSERT INTO chats (user_id, conversation_id, message, role) VALUES ($1, $2, $3, $4)",
     [userId, conversationId, message, role]
@@ -42,7 +47,11 @@ export async function addChatMessage(userId: number, conversationId: string, mes
 }
 
 // Retrieve chat history for a conversation
-export async function getChatHistory(userId: number, conversationId: string, limit = 20) {
+export async function getChatHistory(
+  userId: number,
+  conversationId: string,
+  limit = 20
+) {
   const res = await pool.query(
     "SELECT message, role, created_at FROM chats WHERE user_id = $1 AND conversation_id = $2 ORDER BY created_at ASC LIMIT $3",
     [userId, conversationId, limit]
@@ -64,3 +73,6 @@ export async function getAllConversationsForUser(userId: number) {
   );
   return res.rows;
 }
+
+// Export pool as named export for use in other modules
+export { pool };

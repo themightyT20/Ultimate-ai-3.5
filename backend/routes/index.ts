@@ -18,19 +18,11 @@ export function setupRoutes(app: Express) {
   // Mount authentication routes at /api/auth
   app.use("/api/auth", authRouter);
 
-  // Mount user info and conversation routes at /api
-  app.use("/api", userRouter);
+  // Mount user info and conversation routes at /api/user
+  app.use("/api/user", userRouter);
 
-  // Generate and store an API key for a user (requires authentication)
-  app.post("/api/generate-key", requireAuth, async (req: Request, res: Response) => {
-    // userId is attached by requireAuth middleware from JWT
-    const userId = (req as any).userId;
-    if (!userId) return res.status(401).json({ error: "Not authenticated" });
-
-    const apiKey = uuidv4();
-    await setUserApiKey(userId, apiKey);
-    res.json({ apiKey });
-  });
+  // REMOVE or refactor this if using multi-key system in userRouter!
+  // app.post("/api/generate-key", ...) 
 
   // Chat endpoint with persistent memory and API key validation
   app.post("/api/chat", async (req: Request, res: Response) => {
