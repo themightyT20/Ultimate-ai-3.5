@@ -1,15 +1,13 @@
 import { Express, Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
-import { Express, Request, Response } from "express";
-import { v4 as uuidv4 } from "uuid";
 import { orchestrate } from "../src/orchestrator";
 import { setUserApiKey, getUserByApiKey, addChatMessage, getChatHistory } from "../db";
 import authRouter from "./auth";
+import userRouter from "./user";
 import { requireAuth } from "../middleware/auth";
 
 /**
  * Sets up all routes for the Ultimate AI 3.5 backend.
- * Includes authentication, API key generation, and chat endpoints.
  */
 export function setupRoutes(app: Express) {
   // Health check
@@ -19,6 +17,9 @@ export function setupRoutes(app: Express) {
 
   // Mount authentication routes at /api/auth
   app.use("/api/auth", authRouter);
+
+  // Mount user info and conversation routes at /api
+  app.use("/api", userRouter);
 
   // Generate and store an API key for a user (requires authentication)
   app.post("/api/generate-key", requireAuth, async (req: Request, res: Response) => {

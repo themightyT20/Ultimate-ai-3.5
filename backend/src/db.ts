@@ -12,6 +12,21 @@ export async function getUserByApiKey(apiKey: string) {
   return res.rows[0];
 }
 
+// Retrieve a user by username (for auth)
+export async function getUserByUsername(username: string) {
+  const res = await pool.query("SELECT * FROM users WHERE username = $1", [username]);
+  return res.rows[0];
+}
+
+// Create a new user with username and password hash
+export async function createUser(username: string, passwordHash: string) {
+  const res = await pool.query(
+    "INSERT INTO users (username, password_hash) VALUES ($1, $2) RETURNING id, username",
+    [username, passwordHash]
+  );
+  return res.rows[0];
+}
+
 // Add chat message to conversation
 export async function addChatMessage(userId: number, conversationId: string, message: string, role: string) {
   await pool.query(
@@ -25,6 +40,21 @@ export async function getChatHistory(userId: number, conversationId: string, lim
   const res = await pool.query(
     "SELECT message, role, created_at FROM chats WHERE user_id = $1 AND conversation_id = $2 ORDER BY created_at ASC LIMIT $3",
     [userId, conversationId, limit]
+  );
+  return res.rows;
+}
+
+// Get all unique conversations for a user, ordered by most recent message
+export async function getAllConversationsForUser(userId: number) {
+  const res = await pool.query(
+    `
+    SELECT conversation_id, MAX(created_at) as last_message
+    FROM chats
+    WHERE user_id = $1
+    GROUP BY conversation_id
+    ORDER BY last_message DESC
+    `,
+    [userId]
   );
   return res.rows;
 }
