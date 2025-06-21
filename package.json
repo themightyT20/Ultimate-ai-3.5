@@ -1,6 +1,6 @@
 {
   "name": "ultimate-ai",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "private": false,
   "description": "Official CLI and monorepo for Ultimate AI 3.5",
   "bin": {
