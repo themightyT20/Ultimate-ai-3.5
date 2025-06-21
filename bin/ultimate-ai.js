@@ -39,21 +39,36 @@ rl.on("line", async (line) => {
         "Content-Type": "application/json"
       }
     });
-
+    
     const data = res.data;
-    // Robustly handle different possible response property names
+    
+    // Debug: Show the raw response structure
+    console.log("DEBUG - Raw response:", JSON.stringify(data, null, 2));
+    console.log("DEBUG - Response keys:", Object.keys(data));
+    
+    // Handle response more robustly
+    let responseText = "";
+    
     if (typeof data === "string") {
-      console.log(`> ${data}\n`);
-    } else if (data.response) {
-      console.log(`> ${data.response}\n`);
-    } else if (data.reply) {
-      console.log(`> ${data.reply}\n`);
-    } else if (data.message) {
-      console.log(`> ${data.message}\n`);
+      responseText = data;
+    } else if (data && typeof data === "object") {
+      // Try common response property names
+      responseText = data.response || 
+                   data.reply || 
+                   data.message || 
+                   data.text || 
+                   data.content || 
+                   data.answer ||
+                   data.output ||
+                   JSON.stringify(data, null, 2);
     } else {
-      console.log(`> ${JSON.stringify(data)}\n`);
+      responseText = String(data);
     }
+    
+    console.log(`> ${responseText}\n`);
+    
   } catch (err) {
+    console.log("DEBUG - Error response:", err.response?.data);
     const msg = err.response?.data?.error || err.message;
     console.error(`> Error: ${msg}\n`);
   }
