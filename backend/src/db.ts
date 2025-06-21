@@ -1,5 +1,11 @@
 import { Pool } from "pg";
-const pool = new Pool();
+
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  throw new Error("DATABASE_URL environment variable must be set");
+}
+
+const pool = new Pool({ connectionString });
 
 // Store a new API key for a user
 export async function setUserApiKey(userId: number, apiKey: string) {
