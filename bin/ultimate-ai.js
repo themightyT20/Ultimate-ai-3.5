@@ -39,7 +39,20 @@ rl.on("line", async (line) => {
         "Content-Type": "application/json"
       }
     });
-    console.log(`> ${res.data.response}\n`);
+
+    const data = res.data;
+    // Robustly handle different possible response property names
+    if (typeof data === "string") {
+      console.log(`> ${data}\n`);
+    } else if (data.response) {
+      console.log(`> ${data.response}\n`);
+    } else if (data.reply) {
+      console.log(`> ${data.reply}\n`);
+    } else if (data.message) {
+      console.log(`> ${data.message}\n`);
+    } else {
+      console.log(`> ${JSON.stringify(data)}\n`);
+    }
   } catch (err) {
     const msg = err.response?.data?.error || err.message;
     console.error(`> Error: ${msg}\n`);
