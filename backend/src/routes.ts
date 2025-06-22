@@ -1,7 +1,15 @@
 import { Express, Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 import { orchestrate } from "./orchestrator";
-import { setUserApiKey, getUserByApiKey, addChatMessage, getChatHistory } from "./db";
+import {
+  setUserApiKey,
+  getUserByApiKey,
+  addChatMessage,
+  getChatHistory,
+} from "./db";
+
+// Import your memory router
+import memoryRouter from "../routes/memory";
 
 /**
  * Example setup for Express routes using persistent API keys and chat history.
@@ -57,4 +65,7 @@ export function setupRoutes(app: Express) {
 
     res.json(result);
   });
+
+  // Mount your memory API under /api/memory
+  app.use("/api/memory", memoryRouter);
 }
