@@ -4,6 +4,7 @@ import { orchestrate } from "../src/orchestrator";
 import { setUserApiKey, getUserByApiKey, addChatMessage, getChatHistory } from "../db";
 import authRouter from "./auth";
 import userRouter from "./user";
+import memoryRouter from "../routes/memory"; // <-- ADD THIS LINE
 import { requireAuth } from "../middleware/auth";
 
 /**
@@ -20,9 +21,6 @@ export function setupRoutes(app: Express) {
 
   // Mount user info and conversation routes at /api/user
   app.use("/api/user", userRouter);
-
-  // REMOVE or refactor this if using multi-key system in userRouter!
-  // app.post("/api/generate-key", ...) 
 
   // Chat endpoint with persistent memory and API key validation
   app.post("/api/chat", async (req: Request, res: Response) => {
@@ -56,4 +54,7 @@ export function setupRoutes(app: Express) {
 
     res.json({ response: aiResponse });
   });
+
+  // Mount your memory API under /api/memory
+  app.use("/api/memory", memoryRouter); // <-- ADD THIS LINE
 }

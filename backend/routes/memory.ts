@@ -1,5 +1,5 @@
 import express from "express";
-import pool from "../db"; // Your DB connection (should use process.env.DATABASE_URL)
+import { pool } from "../db"; // Changed to named import
 import { requireAuth } from "../middleware/auth"; // Auth middleware
 
 const router = express.Router();
