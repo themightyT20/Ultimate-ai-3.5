@@ -18,7 +18,7 @@ router.get("/", requireUserAuth, async (req: Request, res: Response) => {
 
   try {
     const { rows } = await pool.query(
-      `SELECT role, content, created_at
+      `SELECT role, message AS content, created_at
        FROM chat_messages
        WHERE user_id = $1 AND conversation_id = $2
        ORDER BY created_at ASC`,
