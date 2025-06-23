@@ -9,6 +9,7 @@ import {
   revokeApiKey
 } from "../src/apiKey"; // <-- new multi-key helpers
 import crypto from "crypto";
+import jwt from "jsonwebtoken";
 
 const router = Router();
 
@@ -58,16 +59,30 @@ router.get("/conversations/:id/history", async (req: Request, res: Response) => 
 });
 
 /**
- * POST /api/generate-key
+ * POST /api/user/generate-key
  * Generates and adds a new API key for the current user.
+ * Accepts either x-api-key or Authorization: Bearer <JWT>
  * Returns: { apiKey: string }
  */
 router.post("/generate-key", async (req: Request, res: Response) => {
+  let user: any = null;
   const apiKey = req.headers["x-api-key"]?.toString();
-  if (!apiKey) return res.status(401).json({ error: "No API key" });
 
-  const user = await getUserByApiKey(apiKey);
-  if (!user) return res.status(401).json({ error: "Invalid API key" });
+  if (apiKey) {
+    user = await getUserByApiKey(apiKey);
+  } else if (req.headers.authorization?.startsWith("Bearer ")) {
+    try {
+      const token = req.headers.authorization.slice(7);
+      const payload = jwt.verify(token, process.env.JWT_SECRET || "super-secret-key") as { userId: number };
+      user = { id: payload.userId };
+    } catch {
+      return res.status(401).json({ error: "Invalid JWT" });
+    }
+  } else {
+    return res.status(401).json({ error: "No API key or JWT" });
+  }
+
+  if (!user) return res.status(401).json({ error: "Invalid auth" });
 
   const newApiKey = crypto.randomBytes(32).toString("hex");
   await createApiKey(user.id, newApiKey);
