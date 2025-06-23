@@ -1,6 +1,6 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import { pool } from "../db"; // Changed to named import
-import { requireAuth } from "../middleware/auth"; // Auth middleware
+import { requireUserAuth } from "../middleware/auth"; // Auth middleware
 
 const router = express.Router();
 
@@ -8,7 +8,7 @@ const router = express.Router();
  * GET /api/memory?conversationId=...
  * Returns all messages for the given conversationId, for the authenticated user.
  */
-router.get("/", requireAuth, async (req, res) => {
+router.get("/", requireUserAuth, async (req: Request, res: Response) => {
   const { conversationId } = req.query;
   const userId = req.user.id;
 
@@ -35,7 +35,7 @@ router.get("/", requireAuth, async (req, res) => {
  * DELETE /api/memory?conversationId=...
  * (Optional) Allows the user to clear their conversation memory.
  */
-router.delete("/", requireAuth, async (req, res) => {
+router.delete("/", requireUserAuth, async (req: Request, res: Response) => {
   const { conversationId } = req.query;
   const userId = req.user.id;
 
