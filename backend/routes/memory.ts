@@ -19,7 +19,7 @@ router.get("/", requireUserAuth, async (req: Request, res: Response) => {
   try {
     const { rows } = await pool.query(
       `SELECT role, content, created_at
-       FROM chats
+       FROM chat_messages
        WHERE user_id = $1 AND conversation_id = $2
        ORDER BY created_at ASC`,
       [userId, conversationId]
@@ -45,7 +45,7 @@ router.delete("/", requireUserAuth, async (req: Request, res: Response) => {
 
   try {
     await pool.query(
-      `DELETE FROM chats WHERE user_id = $1 AND conversation_id = $2`,
+      `DELETE FROM chat_messages WHERE user_id = $1 AND conversation_id = $2`,
       [userId, conversationId]
     );
     res.json({ success: true });
